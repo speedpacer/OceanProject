@@ -183,7 +183,7 @@ void AFlockFish::OnBeginOverlap(AActor* otherActor, UPrimitiveComponent* otherCo
 			nearbyPrey.Add(otherActor);
 		}
 	}
-	else if (otherActor->GetClass() == this->GetClass())
+	else if (otherActor->GetClass() == this->GetClass() && curSeekType == "schooling")
 	{
 		nearbyFriends.Add(otherActor);
 	}
@@ -239,11 +239,36 @@ void AFlockFish::ManageTimers(float delta)
 	if (turnTimer >= turnFrequency && isLeader == true)
 	{
 		spawnTarget();
+		GenerateSeekType();
 		turnTimer = 0.0;
+	}
+	else if (!isLeader)
+	{
+		curSeekType = Cast<AFlockFish>(leader)->curSeekType;
 	}
 
 	updateTimer += delta;
 	turnTimer += delta;
+}
+
+void AFlockFish::GenerateSeekType()
+{
+	if (canSchool && canShoal && isLeader)
+	{
+		float random = FMath::FRandRange(0, 10);
+		if (random >= 9)
+		{
+			if (curSeekType == "shoaling")
+			{
+				curSeekType = "schooling";
+			}
+			else 
+			{
+				curSeekType = "shoaling";
+			}
+		}
+	}
+
 }
 
 
@@ -261,11 +286,11 @@ void AFlockFish::MoveBounds(float delta)
 		FVector actorLocation = this->GetActorLocation();
 		if (actorLocation.Z > underwaterMax.Z)
 		{	
-			actorLocation.Z = underwaterMin.Z + FMath::Abs((0.999 * underwaterMax.Z));
+			//actorLocation.Z = underwaterMin.Z + FMath::Abs((0.999 * underwaterMax.Z));
 		}
 		else if (actorLocation.Z < underwaterMin.Z)
 		{
-			actorLocation.Z = underwaterMin.Z + FMath::Abs((0.001 * underwaterMax.Z));
+			//actorLocation.Z = underwaterMin.Z + FMath::Abs((0.001 * underwaterMax.Z));
 		}
 
 		if (actorLocation.X > maxX)
@@ -315,8 +340,8 @@ void AFlockFish::Setup()
 		}
 		else
 		{
-			minZ = CustomZSeekMin;
-			maxZ = CustomZSeekMax;
+			minZ = CustomZSeekMin * underwaterMax.Z;
+			maxZ = CustomZSeekMax * underwaterMax.Z;
 		}
 
 		fleeDistance = FishInteractionSphere->GetScaledSphereRadius() * FleeDistanceMultiplier;
@@ -348,9 +373,13 @@ void AFlockFish::Setup()
 				}
 			}
 		}
+
+		if (canShoal && !canSchool)
+		{
+			curSeekType = "shoaling";
+		}
+
 		//nearbyFriends.Append(neighbors);
-
-
 		isSetup = true;
 	}
 }

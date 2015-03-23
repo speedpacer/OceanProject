@@ -51,6 +51,7 @@ protected:
 
 	virtual void SeekTarget(float delta);
 	virtual void Flock(float delta);
+	virtual void Shoal(float delta);
 };
 
 

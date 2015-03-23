@@ -24,15 +24,32 @@ void SeekState::Update(float delta)
 	}
 	else
 	{
-		// School with buddies
-		Flock(delta);
+		if (Fish->curSeekType == "schooling")
+		{
+			// School with buddies
+			Flock(delta);
+		}
+		else
+		{
+			// Shoal with buddies
+			Shoal(delta);
+		}
 	}
 }
 
 void SeekState::SeekTarget(float delta)
 {	
 	// Set Speed
-	Fish->curSpeed = FMath::Lerp(Fish->curSpeed, Fish->speed, delta * Fish->SeekDecelerationMultiplier);
+	if (Fish->curSeekType == "schooling")
+	{
+		Fish->curSpeed = FMath::Lerp(Fish->curSpeed, Fish->speed, delta * Fish->SeekDecelerationMultiplier);
+	}
+	else 
+	{
+		// Slow Down
+		float aSpeed = Fish->speed * Fish->ShoalSpeedMultiplier * 0.3;
+		Fish->curSpeed = FMath::Lerp(Fish->curSpeed, aSpeed, delta);
+	}
 
 	// Set Rotation 
 	FVector targetRotation = (Fish->getSeekTarget() - Fish->GetActorLocation() + Fish->AvoidObstacle());
@@ -43,6 +60,41 @@ void SeekState::SeekTarget(float delta)
 	// Set Velocity Vector
 	FVector leaderVelocity = Fish->GetActorForwardVector() * (delta * Fish->curSpeed);
 	Fish->setVelocity(leaderVelocity);
+}
+
+void SeekState::Shoal(float delta)
+{	
+
+	// Set speed
+	if (Fish->GetDistanceTo(Fish->leader) > Fish->distBehindSpeedUpRange)
+	{
+		// Set Speed
+		Fish->curSpeed = FMath::Lerp(Fish->curSpeed, Fish->maxSpeed, delta);
+	}
+	else
+	{
+		// Slow Down
+		float aSpeed = Fish->speed * Fish->ShoalSpeedMultiplier;
+		Fish->curSpeed = FMath::Lerp(Fish->curSpeed, aSpeed, delta);
+	}
+
+	// Generate a seek target around leader
+	float maxDist = Fish->InteractionSphereRadius * Fish->ShoalDistanceMultiplier;
+	FVector leaderLocation = Fish->leader->GetActorLocation();
+	float xVal = leaderLocation.X + FMath::FRandRange(-maxDist, maxDist);
+	float yVal = leaderLocation.Y + FMath::FRandRange(-maxDist, maxDist);
+	float zVal = leaderLocation.Z + FMath::FRandRange(-maxDist * 2, maxDist * 2);
+	FVector seekTarget =  FVector(xVal, yVal, zVal);
+	FRotator shoalerRotation = FRotationMatrix::MakeFromX(seekTarget - Fish->GetActorLocation()).Rotator();
+
+	// Set Velocity
+	FVector flockVelocity = Fish->GetActorForwardVector() * (delta * Fish->curSpeed);
+	Fish->setVelocity(flockVelocity);
+
+	// Set Rotation
+	FRotator shoalRotation = FMath::RInterpTo(Fish->GetActorRotation(), shoalerRotation, delta, Fish->turnSpeed);
+	Fish->setRotation(shoalRotation);
+
 }
 
 void SeekState::Flock(float delta)
@@ -82,7 +134,6 @@ void SeekState::Flock(float delta)
 	FRotator flockerRotation = FRotationMatrix::MakeFromX(flockerVelocity - Fish->GetActorLocation()).Rotator();
 
 	// If fish is too far behind leader, speed up 
-	float newSpeed = Fish->speed;
 	if (Fish->GetDistanceTo(Fish->leader) > Fish->distBehindSpeedUpRange)
 	{
 		// Set Speed

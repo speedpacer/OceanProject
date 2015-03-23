@@ -30,6 +30,18 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Fish Attributes")
 	bool isLeader = false;
 
+	// Does this fish school?
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Fish Attributes")
+	bool canSchool = true;
+
+	// Does this fish shoal? (Unimplemented)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Fish Attributes")
+	bool canShoal = false;
+
+	// Does this fish forage? (Unimplemented)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Fish Attributes")
+	bool canForage = false;
+
 	// Enemies that fish will flee from
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Fish Attributes")
 	TArray<UClass*> enemyTypes;
@@ -73,6 +85,14 @@ public:
 	// Multiplies With Radius of Fish Interaction Sphere for neighbor seperation
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Advanced Settings")
 	float SeperationDistanceMultiplier = 0.75;
+
+	// Shoal Distance Multiplier
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Advanced Settings")
+	float ShoalDistanceMultiplier = 10;
+
+	// Shoal Speed Multiplier
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Advanced Settings")
+	float ShoalSpeedMultiplier = 0.5;
 
 	// Multiplies With Radius of Fish Interaction Sphere for Flee Distance
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Advanced Settings")
@@ -135,6 +155,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TESTING")
 	bool DebugMode = true;
 
+	// What type of seek is the fish doing now?
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TESTING")
+	FString curSeekType = "schooling";
+
 	// Flee distance
 	// NOTE: CURRENTLY SET IN CODE
 	float fleeDistance = 0;
@@ -148,12 +172,6 @@ public:
 
 	// This fish's leader
 	AActor *leader;
-
-	// current prey in world
-	//TArray<AActor*> prey;
-
-	// Enemies that fish will flee from
-	//TArray<AActor*> enemies;
 
 	// These are the fish's flocking buddies
 	TArray<AActor*> neighbors;
@@ -256,6 +274,9 @@ protected:
 
 	/* places the target randomly within the postprocessvolume*/
 	void spawnTarget();
+
+	/* Change the current seek type */
+	void GenerateSeekType();
 
 	/* Does a bunch of debug stuff if debug mode is active*/
 	void Debug();
