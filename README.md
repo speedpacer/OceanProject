@@ -1,9 +1,19 @@
 # OceanProject
 An Ocean Simulation project for Unreal Engine 4
 
-The master branch is currently using UE4 ver 4.7.2 and will be kept up to date with the latest release.
+The master branch is currently using UE4 ver 4.7.3 and will be kept up to date with the latest release.
 
-A initial release for version 4.6.1 will be uploaded shortly.
+---------------------
+
+**Experimental Branches - Current Status**
+
+UnderwaterDev - Master is up to date (03-28-2015 7:20pm GMT)
+
+TK's Dev - Master is up to date (03-28-2015 7:20pm GMT)
+
+SkydomeDev - Coming soon
+
+---------------------
 
 Vote on Upcoming features here: 
 https://trello.com/b/7dzOdkvw/ue4-ocean-weather-project
