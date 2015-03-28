@@ -13,19 +13,19 @@ AOceanManager::AOceanManager(const class FObjectInitializer& PCIP)
 	WaveSet1 = FWaveSetParameters();
 	//WaveSet2 = FWaveSetParameters();
 	PrimaryActorTick.bCanEverTick = true;
+	EnableGerstnerWaves = true;
 	}
 
-FVector AOceanManager::GetWaveHeightValue(FVector location, float time) {
+FVector AOceanManager::GetWaveHeightValue(FVector location) {
 	//FVector sum = FVector(0, 0, 0);
 
-	// Calculate the Gerstner Wave Sets
+	// Flat ocean buoyancy optimization
+	if (!EnableGerstnerWaves)
+		return FVector(location.X, location.Y, RootComponent->GetComponentLocation().Z);
+
+	float time = GetWorld()->GetTimeSeconds() + NetWorkTimeOffset;
+		
 	return CalculateGerstnerWaveSet(GlobalWaveSettings, WaveSet1, FVector2D(WaveDirection.X, WaveDirection.Y), location, time * WaveSpeed);
-	//sum +=
-	// Removing this to reduce complexity, not needed
-	//sum += CalculateGerstnerWaveSet(GlobalWaveSettings, WaveSet2, FVector2D(WaveDirection.X, WaveDirection.Y), location, time * WaveSpeed);
-
-	//return sum;
-
 	}
 
 FVector AOceanManager::CalculateGerstnerWaveSet(FWaveParameter global, FWaveSetParameters ws, FVector2D direction, FVector position, float time) {

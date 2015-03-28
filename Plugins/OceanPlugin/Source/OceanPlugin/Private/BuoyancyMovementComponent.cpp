@@ -46,7 +46,7 @@ void UBuoyancyMovementComponent::TickComponent(float DeltaTime, enum ELevelTick 
 
 	if (!UpdatedComponent->IsSimulatingPhysics()) {
 		// Physics not simulated, snap to water surface
-		FVector waveHeight = OceanManager->GetWaveHeightValue(_anchoredLocation, GetWorld()->GetTimeSeconds());
+		FVector waveHeight = OceanManager->GetWaveHeightValue(_anchoredLocation);
 		UpdatedComponent->SetWorldLocation(FVector(_anchoredLocation.X + waveHeight.X, _anchoredLocation.Y + waveHeight.Y, waveHeight.Z), true);
 
 		return;
@@ -63,7 +63,7 @@ void UBuoyancyMovementComponent::TickComponent(float DeltaTime, enum ELevelTick 
 
 		FVector worldTestPoint = transform.TransformPosition(testPoint.Location);
 
-		FVector waveHeight = OceanManager->GetWaveHeightValue(worldTestPoint, GetWorld()->GetTimeSeconds());
+		FVector waveHeight = OceanManager->GetWaveHeightValue(worldTestPoint);
 
 		float delta = fabs(worldTestPoint.Z - waveHeight.Z) / testPoint.VolumeRadius;
 

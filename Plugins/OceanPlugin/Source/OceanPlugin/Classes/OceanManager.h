@@ -69,6 +69,7 @@ UCLASS(BlueprintType, Blueprintable)
 class AOceanManager : public AActor {
 	GENERATED_UCLASS_BODY()
 
+public:
 	// The world location of the ocean mesh
 	UPROPERTY(BlueprintReadWrite)
 	FVector MeshCenter;
@@ -89,13 +90,15 @@ class AOceanManager : public AActor {
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	FWaveSetParameters WaveSet1;
 
-	// Individual wave settings for wave set 2
-	//UPROPERTY() //BlueprintReadWrite, EditAnywhere) - REMOVING ACCESS to reduce complexity
-	//FWaveSetParameters WaveSet2;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		bool EnableGerstnerWaves;
 
-public:
-	FVector GetWaveHeightValue(FVector location, float time);
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+		float NetWorkTimeOffset;
 
+	UFUNCTION(BlueprintCallable, Category = "Ocean Manager")
+		FVector GetWaveHeightValue(FVector location);
+	
 private:
 	FVector CalculateGerstnerWaveSet(FWaveParameter global, FWaveSetParameters ws, FVector2D direction, FVector position, float time);
 
