@@ -26,6 +26,10 @@ class AFlockFish : public APawn
 	class USphereComponent* FishInteractionSphere;
 
 public:
+
+	/** Constructor */
+	AFlockFish(const FObjectInitializer& ObjectInitializer);
+
 	// Is this fish a leader
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Fish Attributes")
 	bool isLeader = false;
@@ -212,9 +216,6 @@ public:
 	float minX;
 	float minY;
 	float minZ;
-
-	/** Constructor */
-	AFlockFish(const FObjectInitializer& ObjectInitializer);
 
 	// Getters and Setters
 	FVector getSeekTarget()
