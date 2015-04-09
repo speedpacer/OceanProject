@@ -38,14 +38,8 @@ void AFishFactory::OnBeginOverlap(AActor* otherActor, UPrimitiveComponent* other
 	if (otherComp->GetOwner()->GetActorClass() == FishNodeClass)
 	{
 		// Spawn Fish
-		UWorld* const world = GetWorld();
 		AFishNode *curFishNode = Cast<AFishNode>(otherComp->GetOwner());
-		UClass *fishType = curFishNode->FishNodeType;
-		AFlockFish *aFish = Cast<AFlockFish>(world->SpawnActor(fishType));
-		aFish->isLeader = true;
-		aFish->underwaterMax = FVector(this->GetActorLocation().X + 1000, this->GetActorLocation().Y + 1000, this->GetActorLocation().Z + 1000);
-		aFish->underwaterMax = FVector(this->GetActorLocation().X - 1000, this->GetActorLocation().Y - 1000, this->GetActorLocation().Z - 1000);
-		aFish->underwaterBoxLength = 10000;
+		curFishNode->ActivateNode();
 	}
 }
 
@@ -54,6 +48,8 @@ void AFishFactory::OnEndOverlap(AActor* otherActor, UPrimitiveComponent* otherCo
 	if (otherComp->GetOwner()->GetActorClass() == FishNodeClass)
 	{
 		// Despawn Fish
+		AFishNode *curFishNode = Cast<AFishNode>(otherComp->GetOwner());
+		curFishNode->DeactivateNode();
 	}
 }
 
