@@ -39,6 +39,8 @@ void AFishFactory::OnBeginOverlap(AActor* otherActor, UPrimitiveComponent* other
 	{
 		// Spawn Fish
 		AFishNode *curFishNode = Cast<AFishNode>(otherComp->GetOwner());
+		FVector newLoc = FMath::Lerp(curFishNode->GetActorLocation(), this->GetActorLocation(), 0.1);
+		curFishNode->SetActorLocation(newLoc);
 		curFishNode->ActivateNode();
 	}
 }
@@ -49,6 +51,10 @@ void AFishFactory::OnEndOverlap(AActor* otherActor, UPrimitiveComponent* otherCo
 	{
 		// Despawn Fish
 		AFishNode *curFishNode = Cast<AFishNode>(otherComp->GetOwner());
+		//FVector oppositeDirection = curFishNode->GetActorLocation() - this->GetActorLocation();
+		//oppositeDirection.Normalize();
+		//FVector newLoc = oppositeDirection * -100;
+		//curFishNode->SetActorLocation(newLoc);
 		curFishNode->DeactivateNode();
 	}
 }
